@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "juce_audio_utils/juce_audio_utils.h"
 #include <JuceHeader.h>
 
 //==============================================================================
@@ -52,10 +53,10 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    void setWaveViewer (juce::AudioVisualiserComponent* waveViewer);
+
+    juce::AudioVisualiserComponent waveViewer;
 
 private:
-    juce::AudioVisualiserComponent* mWaveViewer;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeAudioProcessor)

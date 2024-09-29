@@ -7,17 +7,25 @@
 */
 
 #include "PluginProcessor.h"
+#include "juce_audio_processors/juce_audio_processors.h"
 #include "PluginEditor.h"
 
 //==============================================================================
 ScopeAudioProcessorEditor::ScopeAudioProcessorEditor (ScopeAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), waveViewer(2)
+    : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    waveViewer.setRepaintRate(45);
-    waveViewer.setBufferSize(512);
-    waveViewer.setSamplesPerBlock(4);
-    waveViewer.setColours(juce::Colours::black, juce::Colours::whitesmoke.withAlpha(0.5f));
-    addAndMakeVisible(waveViewer);
+    addAndMakeVisible(audioProcessor.waveViewer);
+    audioProcessor.waveViewer.setColours(juce::Colours::black, juce::Colours::whitesmoke.withAlpha(0.5f));
+
+    addAndMakeVisible(waveRepaintRateSlider);
+    waveRepaintRateSlider.setRange (2, 2048);
+    waveRepaintRateSlider.setValue (2);
+    waveRepaintRateSlider.addListener (this);
+
+    addAndMakeVisible(waveBufferSizeSlider);
+    waveBufferSizeSlider.setRange (2, 2048);
+    waveBufferSizeSlider.setValue (512);
+    waveBufferSizeSlider.addListener (this);
 
     setSize (400, 300);
 }
@@ -41,6 +49,10 @@ void ScopeAudioProcessorEditor::resized()
 {
     juce::Rectangle<int> bounds = getLocalBounds();
     juce::FlexBox flexBox;
-    flexBox.items.add(juce::FlexItem (waveViewer).withMinHeight(50.0f).withMinWidth(50.0f).withFlex(1));
+
+    flexBox.items.add(juce::FlexItem (waveBufferSizeSlider).withMinHeight(50.0f).withMinWidth(50.0f).withFlex(1));
+    flexBox.items.add(juce::FlexItem (waveRepaintRateSlider).withMinHeight(50.0f).withMinWidth(50.0f).withFlex(1));
+    flexBox.items.add(juce::FlexItem (audioProcessor.waveViewer).withMinHeight(50.0f).withMinWidth(50.0f).withFlex(1));
+
     flexBox.performLayout(bounds);
 }

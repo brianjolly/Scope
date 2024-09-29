@@ -21,10 +21,13 @@ ScopeAudioProcessor::ScopeAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-                    mWaveViewer(nullptr)
+                    waveViewer(1)
 
 #endif
 {
+    waveViewer.setRepaintRate(45);
+    waveViewer.setBufferSize(512);
+    waveViewer.setSamplesPerBlock(4);
 }
 
 ScopeAudioProcessor::~ScopeAudioProcessor()
@@ -159,7 +162,7 @@ void ScopeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
         // ..do something to the data...
     }
-    mWaveViewer->pushBuffer(buffer);
+    waveViewer.pushBuffer(buffer);
 }
 
 //==============================================================================
@@ -192,9 +195,4 @@ void ScopeAudioProcessor::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new ScopeAudioProcessor();
-}
-
-void ScopeAudioProcessor::setWaveViewer(juce::AudioVisualiserComponent* waveViewer)
-{
-    mWaveViewer = waveViewer;
 }

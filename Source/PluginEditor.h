@@ -10,11 +10,13 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 //==============================================================================
 /**
 */
-class ScopeAudioProcessorEditor  : public juce::AudioProcessorEditor
+class ScopeAudioProcessorEditor  : public juce::AudioProcessorEditor, 
+                                   public juce::Slider::Listener
 {
 public:
     ScopeAudioProcessorEditor (ScopeAudioProcessor&);
@@ -25,11 +27,24 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     ScopeAudioProcessor& audioProcessor;
 
-    juce::AudioVisualiserComponent waveViewer;
+    juce::Slider waveRepaintRateSlider;
+    juce::Slider waveBufferSizeSlider;
+
+    void sliderValueChanged (juce::Slider* slider) override
+    {
+        if (slider == &waveRepaintRateSlider)
+        {
+            audioProcessor.waveViewer.setRepaintRate(
+                waveRepaintRateSlider.getValue()
+            );
+        } else if (slider == &waveBufferSizeSlider){
+            audioProcessor.waveViewer.setBufferSize(
+                waveBufferSizeSlider.getValue()
+            );
+        }
+    }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeAudioProcessorEditor)
 };
